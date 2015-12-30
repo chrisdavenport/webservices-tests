@@ -16,7 +16,8 @@ $test->it('should pass if data includes a _links element', isset($data->_links))
 
 $links = $data->_links;
 
-$test->assertBase($base);
+$test->assertLink('base', $base);
+$test->assertLink('home', $base . 'index.php?option=com_home&webserviceVersion=1.0.0&webserviceClient=administrator');
 
 $test->it('should pass if _links element includes a home element', isset($links->home));
 

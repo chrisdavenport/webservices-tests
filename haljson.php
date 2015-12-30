@@ -1,4 +1,7 @@
 <?php
+/**
+ * Generic test class for HAL + JSON interactions.
+ */
 class WebserviceTestHalJson
 {
 	public $url = '';
@@ -33,19 +36,6 @@ class WebserviceTestHalJson
 	}
 
 	/**
-	 * Assert base link exists and is valid.
-	 * 
-	 * @param   string  $base  Base URL.
-	 * 
-	 * @return  void
-	 */
-	public function assertBase($base)
-	{
-		$this->it('should pass if _links element includes a base element', isset($this->data->_links->base));
-		$this->it('should pass if base element matches the base url', $this->data->_links->base->href == $base);
-	}
-
-	/**
 	 * Assertions about embedded content.
 	 * 
 	 * @param   string  $rel         An optional rel that must exist.
@@ -68,11 +58,37 @@ class WebserviceTestHalJson
 
 		foreach ($this->data->_embedded->{$rel} as $k => $item)
 		{
+			$this->it('should pass if the _links property is present in entry ' . $k, isset($item->_links));
+			$this->it('should pass if the _links property has a self entry', isset($item->_links->self));
+			$this->it('should pass if the self entry has an href property', isset($item->_links->self->href));
+
 			foreach ($properties as $property)
 			{
 				$this->it('should pass if the ' . $property . ' entry is present in entry ' . $k, isset($item->$property));
 			}
 		}
+	}
+
+	/**
+	 * Assert that a link exists and optionally matches a given URL.
+	 * 
+	 * @param   string  $rel   Link relation to look for.
+	 * @param   string  $href  Href to check.
+	 * 
+	 * @return  Href of the link that was found.
+	 */
+	public function assertLink($rel, $href = '')
+	{
+		$this->it('should pass if there is a _links element with rel=' . $rel, isset($this->data->_links->$rel));
+
+		if (!isset($this->data->_links->$rel) || $href == '')
+		{
+			return '';
+		}
+
+		$this->it('should pass if the _links element matches the given url', $this->data->_links->{$rel}->href == $href);
+
+		return $this->data->_links->{$rel}->href;
 	}
 
 	/**
@@ -133,8 +149,7 @@ class WebserviceTestHalJson
 	 */
 	public function assertSelf()
 	{
-		$this->it('should pass if _links element includes a self element', isset($this->data->_links->self));
-		$this->it('should pass if self element matches the request url', $this->data->_links->self->href == $this->url);
+		$this->assertLink('self', $this->url);
 	}
 
 	/**

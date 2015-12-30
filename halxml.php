@@ -1,4 +1,7 @@
 <?php
+/**
+ * Generic test class for HAL + XML interactions.
+ */
 class WebserviceTestHalXml
 {
 	public $url = '';
@@ -33,14 +36,14 @@ class WebserviceTestHalXml
 	}
 
 	/**
-	 * Assert base link exists and is valid.
+	 * Assert that a link exists and optionally matches a given URL.
 	 * 
 	 * @param   string  $rel   Link relation to look for.
 	 * @param   string  $href  Href to check.
 	 * 
-	 * @return  void
+	 * @return  Href of the link that was found.
 	 */
-	public function assertLink($rel, $href)
+	public function assertLink($rel, $href = '')
 	{
 		$relFound = '';
 
@@ -55,7 +58,13 @@ class WebserviceTestHalXml
 		}
 
 		$this->it('should pass if there is a link element with rel=' . $rel, $relFound != '');
-		$this->it('should pass if link element matches the given url', $relFound == $href);
+
+		if ($href != '')
+		{
+			$this->it('should pass if the link element matches the given url', $relFound == $href);
+		}
+
+		return $relFound;
 	}
 
 	/**
@@ -68,18 +77,27 @@ class WebserviceTestHalXml
 	 */
 	public function assertEmbedded($rel = '', array $properties = [])
 	{
-		$this->it('should pass if there is an _embedded element', isset($this->data->_embedded));
+		$this->it('should pass if there is at least one embedded resource element', isset($this->data->resource));
 
 		if ($rel == '')
 		{
 			return;
 		}
 
-		$this->it('should pass if _embedded contains a rel called ' . $rel, isset($this->data->_embedded->{$rel}));
-		$this->it('should pass if the _embedded rel contains an array of elements ', is_array($this->data->_embedded->{$rel}));
-		$this->it('should pass if the _embedded rel array has the correct number of elements ', count($this->data->_embedded->{$rel}) == $this->data->totalItems);
+		$embedded = array();
 
-		foreach ($this->data->_embedded->{$rel} as $k => $item)
+		foreach ($this->data->children() as $element)
+		{
+			if ($element->getName() == 'resource' && $element['rel'] == $rel)
+			{
+				$embedded[] = $element;
+			}
+		}
+
+		$this->it('should pass if at least one embedded resource has a rel called ' . $rel, count($embedded));
+		$this->it('should pass if there are the expected number of embedded resources with rel=' . $rel, count($embedded) == $this->data->totalItems);
+
+		foreach ($embedded as $k => $item)
 		{
 			foreach ($properties as $property)
 			{
@@ -146,8 +164,10 @@ class WebserviceTestHalXml
 	 */
 	public function assertSelf()
 	{
-		$this->it('should pass if _links element includes a self element', isset($this->data->_links->self));
-		$this->it('should pass if self element matches the request url', $this->data->_links->self->href == $this->url);
+		$this->it('should pass if the resource element includes a rel attribute', isset($this->data['rel']));
+		$this->it('should pass if the rel attribute has the value "self"', $this->data['rel'] == 'self');
+		$this->it('should pass if the resource element includes an href attribute', isset($this->data['href']));
+		$this->it('should pass if the href attribute matches the request url', (string) $this->data['href'] == $this->url);
 	}
 
 	/**
