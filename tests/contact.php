@@ -16,8 +16,7 @@ $test->it('should pass if the home page includes a contacts element', isset($lin
 $url = $links->contacts->href;
 $test = (new WebserviceTestHalJson)->get($url, 'contacts');
 $test->assertStatus(200);
-$test->assertLink('base', $base);
-$test->assertLink('home', $base . 'index.php?option=com_home&webserviceVersion=1.0.0&webserviceClient=administrator');
+$test->assertLink('contents', $base);
 $test->assertSelf();
 $test->assertPagination();
 $test->assertEmbedded('contacts',
@@ -77,8 +76,7 @@ $item = $data->_embedded->contacts[0];
 $url = $item->_links->self->href;
 $test = (new WebserviceTestHalJson)->get($url, 'contacts');
 $test->assertStatus(200);
-$test->assertLink('base', $base);
-$test->assertLink('home', $base . 'index.php?option=com_home&webserviceVersion=1.0.0&webserviceClient=administrator');
+$test->assertLink('contents', $base);
 $test->assertSelf();
 
 $data = $test->data;
@@ -134,8 +132,7 @@ $url = $test->assertLink('contacts');
 // Follow the link to the contacts collection.
 $test = (new WebserviceTestHalXml)->get($url, 'contacts');
 $test->assertStatus(200);
-$test->assertLink('base', $base);
-$test->assertLink('home', $base . 'index.php?option=com_home&webserviceVersion=1.0.0&webserviceClient=administrator');
+$test->assertLink('contents', $base);
 $test->assertSelf();
 $test->assertPagination();
 $test->assertEmbedded('contacts',
@@ -195,8 +192,7 @@ $item = $data->resource[0];
 $url = $item['href'];
 $test = (new WebserviceTestHalXml)->get($url, 'contacts');
 $test->assertStatus(200);
-$test->assertLink('base', $base);
-$test->assertLink('home', $base . 'index.php?option=com_home&webserviceVersion=1.0.0&webserviceClient=administrator');
+$test->assertLink('contents', $base);
 $test->assertSelf();
 
 $data = $test->data;

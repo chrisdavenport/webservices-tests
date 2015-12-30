@@ -79,7 +79,7 @@ class WebserviceTestHalJson
 	 */
 	public function assertLink($rel, $href = '')
 	{
-		$this->it('should pass if there is a _links element with rel=' . $rel, isset($this->data->_links->$rel));
+		$this->it('should pass if there is a _links element with rel=' . $rel, isset($this->data->_links->{$rel}));
 
 		if (!isset($this->data->_links->$rel) || $href == '')
 		{
