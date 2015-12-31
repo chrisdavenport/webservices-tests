@@ -4,15 +4,16 @@ echo 'Contact page tests' . "\n";
 /**
  * HAL + JSON
  */
-echo ' - testing HAL + JSON' . "\n";
-$url = $base . 'index.php';
-$test = (new WebserviceTestHalJson)->get($url);
+echo ' - testing contact collection page in HAL + JSON' . "\n";
+echo '   - retrieving home page' . "\n";
+$test = (new WebserviceTestHalJson)->get($base);
 
 $data = $test->data;
 $links = $data->_links;
 $test->it('should pass if the home page includes a contacts element', isset($links->contacts));
 
 // Follow the contacts link.
+echo '   - checking the contacts collection page' . "\n";
 $url = $links->contacts->href;
 $test = (new WebserviceTestHalJson)->get($url, 'contacts');
 $test->assertStatus(200);
@@ -44,7 +45,7 @@ $test->it('should pass if there are 8 items available', $data->totalItems == 8);
 $test->it('should pass if there is 1 page available', $data->totalPages == 1);
 
 // Check that we have the correct data for the first item in the embedded list.
-echo 'Checking the first embedded contact item in more detail' . "\n";
+echo '   - checking the first embedded contact item in more detail' . "\n";
 $testData = [
 	'address'		=> 'Street Address',
 	'country'		=> 'Country',
@@ -69,11 +70,13 @@ foreach ($testData as $key => $value)
 }
 
 // Follow the link to contact id 1.
-echo 'Following link to contact with id 1' . "\n";
+echo '   - following link to contact with id 1' . "\n";
 
 // Follow the link to the first contact item listed.
 $item = $data->_embedded->contacts[0];
 $url = $item->_links->self->href;
+
+echo ' - testing contact page in HAL + JSON' . "\n";
 $test = (new WebserviceTestHalJson)->get($url, 'contacts');
 $test->assertStatus(200);
 $test->assertLink('contents', $base);
@@ -121,15 +124,16 @@ foreach ($testData as $key => $value)
 /**
  * HAL + XML
  */
-echo ' - testing HAL + XML' . "\n";
-$url = $base . 'index.php';
-$test = (new WebserviceTestHalXml)->get($url);
+echo ' - testing contact collection page in HAL + XML' . "\n";
+echo '   - retrieving home page' . "\n";
+$test = (new WebserviceTestHalXml)->get($base);
 
 $data = $test->data;
 $links = $data->_links;
 $url = $test->assertLink('contacts');
 
 // Follow the link to the contacts collection.
+echo '   - checking the contacts collection page' . "\n";
 $test = (new WebserviceTestHalXml)->get($url, 'contacts');
 $test->assertStatus(200);
 $test->assertLink('contents', $base);
@@ -160,7 +164,7 @@ $test->it('should pass if there are 8 items available', $data->totalItems == 8);
 $test->it('should pass if there is 1 page available', $data->totalPages == 1);
 
 // Check that we have the correct data for the first item in the embedded list.
-echo 'Checking the first embedded contact item in more detail' . "\n";
+echo '   - checking the first embedded contact item in more detail' . "\n";
 $testData = [
 	'address'		=> 'Street Address',
 	'country'		=> 'Country',
@@ -185,11 +189,13 @@ foreach ($testData as $key => $value)
 }
 
 // Follow the link to contact id 1.
-echo 'Following link to contact with id 1' . "\n";
+echo '   - following link to contact with id 1' . "\n";
 
 // Follow the link to the first contact item listed.
 $item = $data->resource[0];
 $url = $item['href'];
+
+echo ' - testing contact page in HAL + JSON' . "\n";
 $test = (new WebserviceTestHalXml)->get($url, 'contacts');
 $test->assertStatus(200);
 $test->assertLink('contents', $base);
