@@ -110,8 +110,8 @@ $testData = [
 	'metadesc'		=> '',
 	'metadata'		=> '',
 	'featured'		=> 'true',
-	'publish_up'	=> '',
-	'publish_down'	=> '',
+	'publish_up'	=> '1970-01-01T00:00:00+0100',
+	'publish_down'	=> '1970-01-01T00:00:00+0100',
 	'version'		=> 1,
 	'hits'			=> 0,
 ];
@@ -195,7 +195,7 @@ echo '   - following link to contact with id 1' . "\n";
 $item = $data->resource[0];
 $url = $item['href'];
 
-echo ' - testing contact page in HAL + JSON' . "\n";
+echo ' - testing contact page in HAL + XML' . "\n";
 $test = (new WebserviceTestHalXml)->get($url, 'contacts');
 $test->assertStatus(200);
 $test->assertLink('contents', $base);
@@ -229,8 +229,8 @@ $testData = [
 	'metadesc'		=> '',
 	'metadata'		=> '',
 	'featured'		=> 'true',
-	'publish_up'	=> '',
-	'publish_down'	=> '',
+	'publish_up'	=> '1970-01-01T00:00:00+0100',
+	'publish_down'	=> '1970-01-01T00:00:00+0100',
 	'version'		=> 1,
 	'hits'			=> 0,
 ];
