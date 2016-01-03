@@ -7,7 +7,7 @@ echo 'Home page tests' . "\n";
 echo ' - testing home page in HAL + JSON' . "\n";
 $test = (new WebserviceTestHalJson)->get($base);
 $test->assertStatus(200);
-$test->it('should pass if data includes a _links element', isset($test->data->_links));
+$test->it('should pass if data includes a _links element', isset($test->getData()->_links));
 $test->assertLink('contents', $base);
 
 /**

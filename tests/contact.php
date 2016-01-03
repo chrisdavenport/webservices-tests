@@ -8,14 +8,14 @@ echo ' - testing contact collection page in HAL + JSON' . "\n";
 echo '   - retrieving home page' . "\n";
 $test = (new WebserviceTestHalJson)->get($base);
 
-$data = $test->data;
+$data = $test->getData();
 $links = $data->_links;
 $test->it('should pass if the home page includes a contacts element', isset($links->contacts));
 
 // Follow the contacts link.
 echo '   - checking the contacts collection page' . "\n";
 $url = $links->contacts->href;
-$test = (new WebserviceTestHalJson)->get($url, 'contacts');
+$test = (new WebserviceTestHalJson('contacts'))->get($url);
 $test->assertStatus(200);
 $test->assertLink('contents', $base);
 $test->assertSelf();
@@ -39,7 +39,7 @@ $test->assertEmbedded('contacts',
 	]
 );
 
-$data = $test->data;
+$data = $test->getData();
 $test->it('should pass if the page limit is set to 20', $data->pageLimit == 20);
 $test->it('should pass if there are 8 items available', $data->totalItems == 8);
 $test->it('should pass if there is 1 page available', $data->totalPages == 1);
@@ -77,12 +77,12 @@ $item = $data->_embedded->contacts[0];
 $url = $item->_links->self->href;
 
 echo ' - testing contact page in HAL + JSON' . "\n";
-$test = (new WebserviceTestHalJson)->get($url, 'contacts');
+$test = (new WebserviceTestHalJson('contacts'))->get($url);
 $test->assertStatus(200);
 $test->assertLink('contents', $base);
 $test->assertSelf();
 
-$data = $test->data;
+$data = $test->getData();
 $testData = [
 	'name'			=> 'Contact Name Here',
 	'alias'			=> 'name',
@@ -121,6 +121,47 @@ foreach ($testData as $key => $value)
 	$test->it('should pass if the ' . $key . ' entry is present and correct', isset($data->$key) && $data->$key == $value);
 }
 
+echo ' - creating a new contact' . "\n";
+$contact = array(
+	'name'			=> 'Chris Davenport',
+	'alias'			=> 'chris-davenport',
+	'position'		=> 'Sitting',
+	'address'		=> 'Somewhere',
+	'locality'		=> 'Sometown',
+	'region'		=> 'Shropshire',
+	'country'		=> 'United Kingdom',
+	'postcode'		=> 'AB12 3CD',
+	'telephone'		=> '01234 567890',
+	'fax'			=> '01234 567891',
+	'published'		=> 'published',
+	'email'			=> 'test@domain.com',
+);
+$test = (new WebserviceTestHalJson('contacts'))->post($base . 'index.php?option=com_contacts&webserviceVersion=1.0.0&webserviceClient=site', $contact);
+$test->assertStatus(201);
+$test->assertHeader('Location');
+
+echo ' - following Location header' . "\n";
+$url = $base . $test->headers['Location'];
+echo ' - testing newly created contact page in HAL + JSON' . "\n";
+$test = (new WebserviceTestHalJson('contacts'))->get($url);
+$test->assertStatus(200);
+$test->assertLink('contents', $base);
+$test->assertSelf();
+$data = $test->getData();
+
+foreach ($contact as $key => $value)
+{
+	$test->it('should pass if the ' . $key . ' entry is present and correct', isset($data->$key) && $data->$key == $value);
+}
+
+echo ' - deleting newly created contact page' . "\n";
+$test = (new WebserviceTestHalJson('contacts'))->delete($url);
+$test->assertStatus(200);
+
+echo ' - check that contact was deleted' . "\n";
+$test = (new WebserviceTestHalJson('contacts'))->get($url);
+$test->assertStatus(404);
+
 /**
  * HAL + XML
  */
@@ -128,13 +169,13 @@ echo ' - testing contact collection page in HAL + XML' . "\n";
 echo '   - retrieving home page' . "\n";
 $test = (new WebserviceTestHalXml)->get($base);
 
-$data = $test->data;
+$data = $test->getData();
 $links = $data->_links;
 $url = $test->assertLink('contacts');
 
 // Follow the link to the contacts collection.
 echo '   - checking the contacts collection page' . "\n";
-$test = (new WebserviceTestHalXml)->get($url, 'contacts');
+$test = (new WebserviceTestHalXml('contacts'))->get($url);
 $test->assertStatus(200);
 $test->assertLink('contents', $base);
 $test->assertSelf();
@@ -158,7 +199,7 @@ $test->assertEmbedded('contacts',
 	]
 );
 
-$data = $test->data;
+$data = $test->getData();
 $test->it('should pass if the page limit is set to 20', $data->pageLimit == 20);
 $test->it('should pass if there are 8 items available', $data->totalItems == 8);
 $test->it('should pass if there is 1 page available', $data->totalPages == 1);
@@ -196,12 +237,12 @@ $item = $data->resource[0];
 $url = $item['href'];
 
 echo ' - testing contact page in HAL + XML' . "\n";
-$test = (new WebserviceTestHalXml)->get($url, 'contacts');
+$test = (new WebserviceTestHalXml('contacts'))->get($url);
 $test->assertStatus(200);
 $test->assertLink('contents', $base);
 $test->assertSelf();
 
-$data = $test->data;
+$data = $test->getData();
 $testData = [
 	'name'			=> 'Contact Name Here',
 	'alias'			=> 'name',
@@ -239,3 +280,44 @@ foreach ($testData as $key => $value)
 {
 	$test->it('should pass if the ' . $key . ' entry is present and correct', isset($data->$key) && $data->$key == $value);
 }
+
+echo ' - creating a new contact' . "\n";
+$contact = array(
+	'name'			=> 'Chris Davenport',
+	'alias'			=> 'chris-davenport',
+	'position'		=> 'Sitting',
+	'address'		=> 'Somewhere',
+	'locality'		=> 'Sometown',
+	'region'		=> 'Shropshire',
+	'country'		=> 'United Kingdom',
+	'postcode'		=> 'AB12 3CD',
+	'telephone'		=> '01234 567890',
+	'fax'			=> '01234 567891',
+	'published'		=> 'published',
+	'email'			=> 'test@domain.com',
+);
+$test = (new WebserviceTestHalXml('contacts'))->post($base . 'index.php?option=com_contacts&webserviceVersion=1.0.0&webserviceClient=site', $contact);
+$test->assertStatus(201);
+$test->assertHeader('Location');
+
+echo ' - following Location header' . "\n";
+$url = $base . $test->headers['Location'];
+echo ' - testing newly created contact page in HAL + XML' . "\n";
+$test = (new WebserviceTestHalXml('contacts'))->get($url);
+$test->assertStatus(200);
+$test->assertLink('contents', $base);
+$test->assertSelf();
+$data = $test->getData();
+
+foreach ($contact as $key => $value)
+{
+	$test->it('should pass if the ' . $key . ' entry is present and correct', isset($data->$key) && $data->$key == $value);
+}
+
+echo ' - deleting newly created contact page' . "\n";
+$test = (new WebserviceTestHalXml('contacts'))->delete($url);
+$test->assertStatus(200);
+
+echo ' - check that contact was deleted' . "\n";
+$test = (new WebserviceTestHalXml('contacts'))->get($url);
+$test->assertStatus(404);
