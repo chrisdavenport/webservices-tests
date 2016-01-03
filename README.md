@@ -7,6 +7,3 @@ A suite of tests for the webservices project (https://github.com/chrisdavenport/
 * php runalltests.php
 
 The tests assume a default Joomla installation with the Test Sample Data set installed.
-
-The "It should pass if the published entry is present and correct" test is currently failing due to
-the transforms being called twice.  See https://github.com/joomla-projects/webservices/issues/14
