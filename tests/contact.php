@@ -80,7 +80,8 @@ echo ' - testing contact page in HAL + JSON' . "\n";
 $test = (new WebserviceTestHalJson('contacts'))->get($url);
 $test->assertStatus(200);
 $test->assertLink('contents', $base);
-$test->assertSelf();
+$test->assertLink('contacts:list', $base . 'contacts');
+$test->assertSelf($base . 'contacts/1');
 
 $data = $test->getData();
 $testData = [
@@ -136,7 +137,7 @@ $contact = array(
 	'published'		=> 'published',
 	'email'			=> 'test@domain.com',
 );
-$test = (new WebserviceTestHalJson('contacts'))->post($base . 'index.php?option=com_contacts&webserviceVersion=1.0.0&webserviceClient=site', $contact);
+$test = (new WebserviceTestHalJson('contacts'))->post($base . 'contacts', $contact);
 $test->assertStatus(201);
 $test->assertHeader('Location');
 
@@ -296,7 +297,7 @@ $contact = array(
 	'published'		=> 'published',
 	'email'			=> 'test@domain.com',
 );
-$test = (new WebserviceTestHalXml('contacts'))->post($base . 'index.php?option=com_contacts&webserviceVersion=1.0.0&webserviceClient=site', $contact);
+$test = (new WebserviceTestHalXml('contacts'))->post($base . 'contacts', $contact);
 $test->assertStatus(201);
 $test->assertHeader('Location');
 

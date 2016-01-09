@@ -167,10 +167,17 @@ class WebserviceTestHalJson extends WebserviceTest
 	/**
 	 * Assert self link.
 	 * 
+	 * @param   string  $url  Optional URL to test against.
+	 * 
 	 * @return  void
 	 */
-	public function assertSelf()
+	public function assertSelf($url = '')
 	{
 		$this->assertLink('self', $this->url);
+
+		if ($url != '')
+		{
+			$this->assertLink('self', $url);
+		}
 	}
 }
