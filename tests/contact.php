@@ -80,7 +80,7 @@ echo ' - testing contact page in HAL + JSON' . "\n";
 $test = (new WebserviceTestHalJson('contacts'))->get($url);
 $test->assertStatus(200);
 $test->assertLink('contents', $base);
-$test->assertLink('contacts:list', $base . 'contacts');
+$test->assertLink('collection', $base . 'contacts');
 $test->assertSelf($base . 'contacts/1');
 
 $data = $test->getData();
