@@ -52,6 +52,25 @@ class WebserviceTestHalXml extends WebserviceTest
 	}
 
 	/**
+	 * Assertions about data properties.
+	 * 
+	 * @param   object  $item      Object to be tested.
+	 * @param   array   $testData  Array of key-value pairs that are expected to be present.
+	 * 
+	 * @return  void 
+	 */
+	public function assertData($item, array $testData = [])
+	{
+		foreach ($testData as $key => $value)
+		{
+			$this->it(
+				'should pass if the ' . $key . ' entry is present and correct',
+				isset($item->$key) && (string) $item->$key == (string) $value
+			);
+		}
+	}
+
+	/**
 	 * Assert that a link exists and optionally matches a given URL.
 	 * 
 	 * @param   string  $rel   Link relation to look for.
@@ -115,7 +134,7 @@ class WebserviceTestHalXml extends WebserviceTest
 		}
 
 		$this->it('should pass if at least one embedded resource has a rel called ' . $rel, count($embedded));
-		$this->it('should pass if there are the expected number of embedded resources with rel=' . $rel, count($embedded) == $data->totalItems);
+		$this->it('should pass if there are the expected number of embedded resources with rel=' . $rel, count($embedded) == min((int) $data->totalItems, (int) $data->pageLimit));
 
 		foreach ($embedded as $k => $item)
 		{

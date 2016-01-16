@@ -52,6 +52,25 @@ class WebserviceTestHalJson extends WebserviceTest
 	}
 
 	/**
+	 * Assertions about data properties.
+	 * 
+	 * @param   object  $item      Object to be tested.
+	 * @param   array   $testData  Array of key-value pairs that are expected to be present.
+	 * 
+	 * @return  void 
+	 */
+	public function assertData($item, array $testData = [])
+	{
+		foreach ($testData as $key => $value)
+		{
+			$this->it(
+				'should pass if the ' . $key . ' entry is present and correct',
+				isset($item->$key) && $item->$key == $value
+			);
+		}
+	}
+
+	/**
 	 * Assertions about embedded content.
 	 * 
 	 * @param   string  $rel         An optional rel that must exist.
@@ -72,7 +91,7 @@ class WebserviceTestHalJson extends WebserviceTest
 
 		$this->it('should pass if _embedded contains a rel called ' . $rel, isset($data->_embedded->{$rel}));
 		$this->it('should pass if the _embedded rel contains an array of elements ', is_array($data->_embedded->{$rel}));
-		$this->it('should pass if the _embedded rel array has the correct number of elements ', count($data->_embedded->{$rel}) == $data->totalItems);
+		$this->it('should pass if the _embedded rel array has the correct number of elements ', count($data->_embedded->{$rel}) == min($data->totalItems, $data->pageLimit));
 
 		foreach ($data->_embedded->{$rel} as $k => $item)
 		{
