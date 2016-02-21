@@ -81,7 +81,7 @@ $test->assertStatus(200);
 $test->assertLink('contents', $base);
 $test->assertSelf();
 $test->assertLink('j:category', $base . 'categories/16');
-$test->assertLink('author', $base . 'users/672');
+$test->assertLink('author', $base . 'users/368');
 
 $data = $test->getData();
 $testData = [
@@ -121,6 +121,20 @@ foreach ($testData as $key => $value)
 {
 	$test->it('should pass if the ' . $key . ' entry is present and correct', isset($data->$key) && $data->$key == $value);
 }
+
+echo ' - check that we get a required field error when creating a new contact with no data' . "\n";
+$test = (new WebserviceTestHalXml('contacts'))->post($base . 'contacts', []);
+$test->assertStatus(406);
+$data = $test->getData();
+
+// @TODO The XML doesn't currently return an error response.  This needs to be implemented.
+//$test->it('should pass if the data returned contains a _messages element', isset($data->_messages));
+//$test->it('should pass if the _messages element is an array', is_array($data->_messages));
+//$test->it('should pass if the _messages array has exactly one element', count($data->_messages) == 1);
+//$test->it('should pass if the first _messages element has a type element', isset($data->_messages[0]->type));
+//$test->it('should pass if the first _messages element has a type element = \'error\'', $data->_messages[0]->type == 'error');
+//$test->it('should pass if the first _messages element has a message element', isset($data->_messages[0]->message));
+//$test->it('should pass if the first _messages element has a message element = \'Field \'name\' is required.\'', $data->_messages[0]->message == 'Field \'name\' is required.');
 
 echo ' - creating a new contact' . "\n";
 $contact = array(

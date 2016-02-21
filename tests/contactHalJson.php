@@ -78,7 +78,7 @@ $test->assertStatus(200);
 $test->assertLink('contents', $base);
 $test->assertLink('collection', $base . 'contacts');
 $test->assertLink('j:category', $base . 'categories/16');
-$test->assertLink('author', $base . 'users/672');
+$test->assertLink('author', $base . 'users/368');
 $test->assertSelf($base . 'contacts/1');
 
 $test->assertData($test->getData(),
@@ -115,6 +115,19 @@ $test->assertData($test->getData(),
 		'hits'			=> 0,
 	]
 );
+
+echo ' - check that we get a required field error when creating a new contact with no data' . "\n";
+$test = (new WebserviceTestHalJson('contacts'))->post($base . 'contacts', []);
+$test->assertStatus(406);
+$data = $test->getData();
+
+$test->it('should pass if the data returned contains a _messages element', isset($data->_messages));
+$test->it('should pass if the _messages element is an array', is_array($data->_messages));
+$test->it('should pass if the _messages array has exactly one element', count($data->_messages) == 1);
+$test->it('should pass if the first _messages element has a type element', isset($data->_messages[0]->type));
+$test->it('should pass if the first _messages element has a type element = \'error\'', $data->_messages[0]->type == 'error');
+$test->it('should pass if the first _messages element has a message element', isset($data->_messages[0]->message));
+$test->it('should pass if the first _messages element has a message element = \'Field \'name\' is required.\'', $data->_messages[0]->message == 'Field \'name\' is required.');
 
 echo ' - creating a new contact' . "\n";
 $contact = array(

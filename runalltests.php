@@ -1,5 +1,5 @@
 <?php
-$base = 'http://localhost/webservices-test2/fullcms/www/';
+$base = 'http://localhost/webservices-test4/fullcms/www/';
 
 include 'webservicetest.php';
 include 'haljson.php';
