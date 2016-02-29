@@ -72,7 +72,7 @@ echo '   - following link to contact with id 1' . "\n";
 $item = $data->_embedded->contacts[0];
 $url = $item->_links->self->href;
 
-echo ' - testing contact page in HAL + JSON' . "\n";
+echo ' - testing contact page in HAL + JSON ' . $url . "\n";
 $test = (new WebserviceTestHalJson('contacts'))->get($url);
 $test->assertStatus(200);
 $test->assertLink('contents', $base);
@@ -107,7 +107,8 @@ $test->assertData($test->getData(),
 		'language'		=> 'en-GB',
 		'metakey'		=> '',
 		'metadesc'		=> '',
-		'metadata'		=> '',
+		'robots'        => '',
+		'rights'        => '',
 		'featured'		=> 'true',
 		'publish_up'	=> '1970-01-01T00:00:00+0100',
 		'publish_down'	=> '1970-01-01T00:00:00+0100',

@@ -23,9 +23,12 @@ $test->assertPagination();
 
 $test->assertEmbedded('categories',
 	[
+        'id',
+        'path',
+        'extension',
+        'alias',
+        'language',
 		'title',
-		'featured',
-		'ordering',
 	]
 );
 
@@ -38,10 +41,13 @@ $test->it('should pass if there is 4 pages available', $data->totalPages == 4);
 echo '   - checking the first embedded contact item in more detail' . "\n";
 $test->assertData($data->_embedded->categories[0],
 	[
-		'featured'		=> '',
-		'language'		=> '',
-		'title'			=> 'ROOT',
-		'ordering'		=> '',
+        'id'        => 'urn:joomla:categories:1',
+        'title'     => 'ROOT',
+        'path'      => '',
+        'extension' => 'system',
+        'alias'     => 'root',
+        'language'  => '*',
+        'state'     => 'published',
 	]
 );
 
@@ -49,13 +55,15 @@ $test->assertData($data->_embedded->categories[0],
 echo '   - checking the eighth embedded contact item in more detail' . "\n";
 $test->assertData($data->_embedded->categories[7],
 	[
-		'featured'		=> '',
-		'language'		=> '',
-		'title'			=> 'Sample Data-Contact',
-		'ordering'		=> '',
+        'id'        => 'urn:joomla:categories:16',
+        'title'     => 'Sample Data-Contact',
+        'path'      => 'sample-data-contact',
+        'extension' => 'com_contact',
+        'alias'     => 'sample-data-contact',
+        'language'  => '*',
+        'state'     => 'published',
 	]
 );
-
 
 // Follow the link to category id 16 (the eighth item on the list).
 echo '   - following link to category with id 16' . "\n";
@@ -82,8 +90,8 @@ $test->assertData($test->getData(),
 		'state'			=> 'published',
 		'metadesc'		=> '',
 		'metakey'		=> '',
-		'metadata'		=> '',
-		'hits'			=> '',
+		'pageTitle'		=> '',
+		'hits'			=> '0',
 		'language'		=> '*',
 		'version'		=> '1',
 	]

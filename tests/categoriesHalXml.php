@@ -1,3 +1,4 @@
+
 <?php
 echo 'Categories page tests' . "\n";
 
@@ -19,12 +20,16 @@ $test->assertStatus(200);
 $test->assertLink('contents', $base);
 $test->assertSelf();
 $test->assertPagination();
+
 $test->assertEmbedded('categories',
-	[
-		'title',
-		'featured',
-		'ordering',
-	]
+    [
+        'id',
+        'path',
+        'extension',
+        'alias',
+        'language',
+        'title',
+    ]
 );
 
 $data = $test->getData();
@@ -35,25 +40,30 @@ $test->it('should pass if there is 4 pages available', $data->totalPages == 4);
 // Check that we have the correct data for the first item in the embedded list.
 echo '   - checking the first embedded contact item in more detail' . "\n";
 $test->assertData($data->resource[0],
-	[
-		'featured'		=> '',
-		'language'		=> '',
-		'title'			=> 'ROOT',
-		'ordering'		=> '',
-	]
+    [
+        'id'        => 'urn:joomla:categories:1',
+        'title'     => 'ROOT',
+        'path'      => '',
+        'extension' => 'system',
+        'alias'     => 'root',
+        'language'  => '*',
+        'state'     => 'published',
+    ]
 );
 
 // Check that we have the correct data for the eighth item in the embedded list.
 echo '   - checking the eighth embedded contact item in more detail' . "\n";
 $test->assertData($data->resource[7],
-	[
-		'featured'		=> '',
-		'language'		=> '',
-		'title'			=> 'Sample Data-Contact',
-		'ordering'		=> '',
-	]
+    [
+        'id'        => 'urn:joomla:categories:16',
+        'title'     => 'Sample Data-Contact',
+        'path'      => 'sample-data-contact',
+        'extension' => 'com_contact',
+        'alias'     => 'sample-data-contact',
+        'language'  => '*',
+        'state'     => 'published',
+    ]
 );
-
 
 // Follow the link to category id 16 (the eighth item on the list).
 echo '   - following link to category with id 16' . "\n";
@@ -71,21 +81,21 @@ $test->assertLink('up', $base . 'categories/1');
 $test->assertLink('j:contacts', $base . 'categories/16/contacts');
 $test->assertSelf($base . 'categories/16');
 $test->assertData($test->getData(),
-	[
-		'level'			=> '1',
-		'path'			=> 'sample-data-contact',
-		'extension'		=> 'com_contact',
-		'alias'			=> 'sample-data-contact',
-		'note'			=> '',
-		'description'	=> '',
-		'state'			=> 'published',
-		'metadesc'		=> '',
-		'metakey'		=> '',
-		'metadata'		=> '',
-		'hits'			=> '',
-		'language'		=> '*',
-		'version'		=> '1',
-	]
+    [
+        'level'         => '1',
+        'path'          => 'sample-data-contact',
+        'extension'     => 'com_contact',
+        'alias'         => 'sample-data-contact',
+        'note'          => '',
+        'description'   => '',
+        'state'         => 'published',
+        'metadesc'      => '',
+        'metakey'       => '',
+        'pageTitle'     => '',
+        'hits'          => '0',
+        'language'      => '*',
+        'version'       => '1',
+    ]
 );
 
 // Follow the link to the contacts collection.
